@@ -10,7 +10,7 @@
 #include "Logging/LogVerbosity.h"
 #include "Modules/ModuleManager.h"
 
-#include "RdEditorModel/RdEditorModel.Generated.h"
+#include "RdEditorModel/RdEditorModel.Pregenerated.h"
 
 class ProtocolFactory;
 
@@ -40,6 +40,7 @@ public:
 	virtual void ViewModel(rd::Lifetime Lifetime,
 	                       TFunction<void(rd::Lifetime,
 	                                      JetBrains::EditorPlugin::RdEditorModel const&)> Handler) override;
+	virtual void QueueModelAction(TFunction<void(JetBrains::EditorPlugin::RdEditorModel const&)> Handler) override;
 	virtual void QueueAction(TFunction<void()> Handler) override;
 	virtual bool FireAsyncAction(TFunction<void(JetBrains::EditorPlugin::RdEditorModel const&)> Handler) override;
 

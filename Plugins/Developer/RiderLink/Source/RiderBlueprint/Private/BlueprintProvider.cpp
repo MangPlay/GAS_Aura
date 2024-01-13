@@ -13,7 +13,7 @@
 #include "Toolkits/AssetEditorManager.h"
 #endif
 #include "Kismet2/BlueprintEditorUtils.h"
-#include "Model/RdEditorProtocol/RdEditorModel/RdEditorModel.Generated.h"
+#include "Model/RdEditorProtocol/RdEditorModel/RdEditorModel.Pregenerated.h"
 
 #if ENGINE_MAJOR_VERSION < 5
 #include "AssetData.h"
@@ -60,13 +60,22 @@ void BluePrintProvider::OpenBlueprint(JetBrains::EditorPlugin::BlueprintReferenc
             const FString AssetName = FPaths::GetBaseFilename(AssetPathName);
             UObject* Object = FindObject<UObject>(Package, *AssetName);
             const UBlueprint* Blueprint = Cast<UBlueprint>(Object);
+
             if(bIsValidGuid && Blueprint != nullptr)
             {
-                Object = FBlueprintEditorUtils::GetNodeByGUID(Blueprint, AssetGuid);   
+                UEdGraphNode* EdGraphNode = FBlueprintEditorUtils::GetNodeByGUID(Blueprint, AssetGuid);
+                if(EdGraphNode != nullptr)
+                {
+                    FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(EdGraphNode); 
+                }
+                else
+                {
+                    FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(Blueprint);
+                }
             }
-            if(Object != nullptr)
-            {
-                FKismetEditorUtilities::BringKismetToFocusAttentionOnObject(Blueprint);                
+            else if(Object != nullptr)
+            {      
+                GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OpenEditorForAsset(Object);         
             }
         }
     });
